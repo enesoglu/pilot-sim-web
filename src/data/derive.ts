@@ -18,7 +18,9 @@ export function deriveStressProbability(epoch: EpochRow): number {
   let prob = sigmoid(avg * 1.5 - 0.5);
 
   if (epoch.eventLabel === 1) {
-    prob = 0.7 + Math.random() * 0.2;
+    // Deterministic blend toward high stress for labeled event epochs
+    const variation = Math.abs(Math.sin(epoch.epochIndex * 2.718)) * 0.2;
+    prob = Math.max(prob, 0.7 + variation);
   }
   return Math.max(0, Math.min(1, prob));
 }

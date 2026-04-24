@@ -9,13 +9,19 @@ interface State {
 }
 
 export function useFlightAnalysis(flightId: string): State {
-  const [state, setState] = useState<State>({ analysis: null, loading: true, error: null });
+  const [state, setState] = useState<State>({ analysis: null, loading: false, error: null });
 
   useEffect(() => {
+    if (!flightId) {
+      setState({ analysis: null, loading: false, error: null });
+      return;
+    }
     setState({ analysis: null, loading: true, error: null });
     loadFlightAnalysis(flightId)
       .then((analysis) => setState({ analysis, loading: false, error: null }))
-      .catch((err: unknown) => setState({ analysis: null, loading: false, error: String(err) }));
+      .catch((err: unknown) =>
+        setState({ analysis: null, loading: false, error: String(err) })
+      );
   }, [flightId]);
 
   return state;
